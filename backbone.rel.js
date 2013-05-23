@@ -94,7 +94,7 @@
           if (typeof memo === 'undefined') {
             return self.rel(key);
           } else if (_.isArray(memo)) {
-            return _.map(memo, function (item) { return item.rel(key); });
+            return _.flatten(_.map(memo, function (item) { return item.rel(key); }));
           } else if (memo) {
             return memo.rel(key);
           } else {
