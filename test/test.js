@@ -5,7 +5,7 @@ var _ = require('underscore')
   , Collections = {}
 
   // instances
-  , tasks, projects, users;
+  , tasks, projects, users, comments;
 
 GLOBAL.Backbone = require('backbone');
 require('../backbone.rel');
@@ -17,6 +17,11 @@ Models.Task = Backbone.Model.extend({
     , project: function (task) {
         return projects.get(task.rel('user.project'));
       }
+    };
+  }
+, hasMany: function () {
+    return {
+      comments: {collection: comments, id: 'task_id'}
     };
   }
 });
@@ -53,6 +58,14 @@ Models.Project = Backbone.Model.extend({
   }
 });
 
+Models.Comment = Backbone.Model.extend({
+  belongsTo: function () {
+    return {
+      task: tasks
+    };
+  }
+});
+
 Collections.Users = Backbone.Collection.extend({
   model: Models.User
 });
@@ -65,6 +78,10 @@ Collections.Tasks = Backbone.Collection.extend({
   model: Models.Task
 });
 
+Collections.Comments = Backbone.Collection.extend({
+  model: Models.Comment
+});
+
 // lengths
 describe('Rel', function () {
 
@@ -72,12 +89,14 @@ describe('Rel', function () {
     tasks = new Collections.Tasks();
     projects = new Collections.Projects();
     users = new Collections.Users();
+    comments = new Collections.Comments();
 
-    // Initial state
+    // Adds users to a project
     for (var i = 0; i < 3; i++) {
       users.add({id: i, project_id: i % 3});
     }
 
+    // Adds tasks to users
     for (var i = 0; i < 6; i++) {
       if (i === 0) {
         tasks.add({id: i});
@@ -86,8 +105,14 @@ describe('Rel', function () {
       }
     }
 
+    // Addes projects to owners
     for (var i = 0; i < 2; i++) {
       projects.add({id: i, owner_id: 0});
+    }
+
+    // Addes comments to tasks
+    for (var i = 0; i < 12; i++) {
+      comments.add({id: i, task_id: i % 3});
     }
   });
 
@@ -146,6 +171,10 @@ describe('Rel', function () {
 
     it('returns the user tasks owners for a given user', function () {
       assert.deepEqual(_.pluck(users.get(0).rel('tasks.user'), 'id'), [0, 0]);
+    });
+
+    it('returns the comments of all user tasks', function () {
+      assert.deepEqual(_.pluck(users.get(0).rel('tasks.comments'), 'id'), [2, 5, 8, 11]);
     });
   });
 
