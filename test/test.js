@@ -141,7 +141,6 @@ describe('Rel', function () {
       assert.deepEqual(tasks.get(2).rel('user'), users.get(0));
       assert.deepEqual(tasks.get(3).rel('user'), users.get(1));
       assert.deepEqual(tasks.get(4).rel('user'), users.get(0));
-      // ...
     });
 
     it('returns the project for a given task', function () {
@@ -151,7 +150,6 @@ describe('Rel', function () {
       assert.deepEqual(tasks.get(1).rel('project'), projects.get(1));
       assert.deepEqual(tasks.get(2).rel('project'), projects.get(0));
       assert.deepEqual(tasks.get(3).rel('project'), projects.get(1));
-      // ...
     });
 
     it('returns the owner for a given project', function () {
@@ -188,7 +186,7 @@ describe('Rel', function () {
       , belongsTo: function () {
           return {
             project: projects
-          }
+          };
         }
       });
 
@@ -204,7 +202,7 @@ describe('Rel', function () {
       , belongsTo: function () {
           return {
             project: projects
-          }
+          };
         }
       });
 
@@ -220,7 +218,7 @@ describe('Rel', function () {
       , hasMany: function () {
           return {
             owned_projects: {collection: projects, id: 'owner_id'}
-          }
+          };
         }
       });
 
@@ -228,5 +226,4 @@ describe('Rel', function () {
       assert.deepEqual(tasks.rel('owned_projects'), null);
     });
   });
-
 });
